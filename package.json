@@ -1,0 +1,16 @@
+{
+    "name":"Lendr.co",
+    "version":"0.0.1",
+    "private": true,
+    "dependencies":{
+	"express": "latest",
+	"jade": "latest",
+    	"passport": ">= 0.0.0",
+    	"passport-facebook": ">= 0.0.0",
+	"mongoose": "latest",
+	"nodemailer": "0.3.20",	
+      	"connect": ">= 1.9.1",
+      	"socket.io": "~0.9",
+      	"cookie": "0.0.4"
+    }
+}
