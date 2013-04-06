@@ -30,7 +30,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new FacebookStrategy({
 	    clientID: FACEBOOK_APP_ID,
 		clientSecret: FACEBOOK_APP_SECRET,
-		callbackURL: "http://ec2-54-245-170-121.us-west-2.compute.amazonaws.com:3000/auth/facebook/callback"
+		callbackURL: "http://ec2-54-245-170-121.us-west-2.compute.amazonaws.com:8000/auth/facebook/callback"
 		},
 	function(accessToken, refreshToken, profile, done) {
 	    // asynchronous verification, for effect...
@@ -108,7 +108,7 @@ app.get('/logout', function(req, res){
 	res.redirect('/');
     });
 
-app.listen(3000);
+app.listen(8000);
 
 
 // Simple route middleware to ensure user is authenticated.
