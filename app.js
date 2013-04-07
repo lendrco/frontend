@@ -45,19 +45,24 @@ passport.use(new FacebookStrategy({
 		callbackURL: "http://ec2-54-245-170-121.us-west-2.compute.amazonaws.com:8000/auth/facebook/callback"
 		},
 	function(accessToken, refreshToken, profile, done) {
+	    curProfile = JSON.parse(profile._raw);
+	    console.log(curProfile);
 	    // asynchronous verification, for effect...
 	    process.nextTick(function () {
 		    // console.log(accessToken);
-		    // console.log(profile);
+		    console.log(curProfile.id);
 		    // TODO: set this from the callback
-		    curProfile = profile;
+
 		    curToken = accessToken;
-		    models.Profile.addUser(profile._raw.id, profile._raw, new Date());
+		    models.Profile.addUser(curProfile.id, JSON.stringify(curProfile), new Date());
+		    
 		    getFbData(accessToken, '/me/friends', function(data){
 			    // console.log(data);
-			    var friendsList = data.data;
-			    for(var i=0; i<friendsList.length; i++){
-			        models.addFriend(profile._raw.id, friendsList[i].id, new Date());
+			    var friendsList = JSON.parse(data);
+			    
+			    for(var i=0; i<friendsList.data.length; i++){
+				models.Friend.addFriend(curProfile.id, friendsList.data[i].id, new Date());
+				// console.log(friendsList.data[i].id);
 			    }
 			});
 		    
