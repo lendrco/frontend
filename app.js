@@ -11,7 +11,7 @@ var curProfile;
 var curToken;
 
 // TODO: This should be replaced by database adapter later                      
-var dbPath      = 'mongodb://localhost/lendrDb';
+var dbPath      = 'mongodb://50.112.250.104/lendrDb';
 // Import the data layer, should abstracted away later                          
 var mongoose = require('mongoose');
 
@@ -89,9 +89,11 @@ app.configure(function() {
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.session({ secret: 'keyboard cat' }));
+	/*
 	mongoose.connect(dbPath, function onMongooseError(err) {
                 if (err) throw err;
             });
+	*/
 	// Initialize Passport!  Also use passport.session() middleware, to support
 	// persistent login sessions (recommended).
 	app.use(passport.initialize());
