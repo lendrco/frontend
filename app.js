@@ -17,7 +17,8 @@ var mongoose = require('mongoose');
 
 var models = {
     Profile: require('./models/Profile')(app, mongoose),
-    Friend: require('./models/Friend')(app, mongoose)
+    Friend: require('./models/Friend')(app, mongoose),
+    Post: require('./models/Post')(app, mongoose)
 };
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -63,6 +64,17 @@ passport.use(new FacebookStrategy({
 			    for(var i=0; i<friendsList.data.length; i++){
 				models.Friend.addFriend(curProfile.id, friendsList.data[i].id, new Date());
 				// console.log(friendsList.data[i].id);
+			    }
+			});
+
+			 // Encoded FQL query 
+			var fql = "fql?q=SELECT%20message%20FROM%20stream%20WHERE%20source_id%20%3D%20" + profile._raw.id + "%20AND%20actor_id%20%3D%20" + profile._raw.id + "%20AND%20message%20!%3D%20%22%22%20LIMIT%201000000";
+
+			getFbData(accessToken, fql, function(data){
+				var postsList = JSON.parse(data);
+			    
+			    for(var i=0; i<friendsList.length; i++){
+			        models.Post.addPost(profile._raw.id, postsList[i].id);
 			    }
 			});
 		    
