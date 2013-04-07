@@ -16,7 +16,8 @@ var dbPath      = 'mongodb://localhost/lendrDb';
 var mongoose = require('mongoose');
 
 var models = {
-    Profile: require('./models/Profile')(app, mongoose)
+    Profile: require('./models/Profile')(app, mongoose),
+    Friend: require('./models/Friend')(app, mongoose)
 };
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -51,9 +52,13 @@ passport.use(new FacebookStrategy({
 		    // TODO: set this from the callback
 		    curProfile = profile;
 		    curToken = accessToken;
-		    models.Profile.addUser(profile._raw.id, profile._raw);
+		    models.Profile.addUser(profile._raw.id, profile._raw, new Date());
 		    getFbData(accessToken, '/me/friends', function(data){
-			    console.log(data);
+			    // console.log(data);
+			    var friendsList = data.data;
+			    for(var i=0; i<friendsList.length; i++){
+			        models.addFriend(profile._raw.id, friendsList[i].id, new Date());
+			    }
 			});
 		    
 		    // To keep the example simple, the user's Facebook profile is returned to
