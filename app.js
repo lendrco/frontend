@@ -11,7 +11,7 @@ var curProfile;
 var curToken;
 
 // TODO: This should be replaced by database adapter later                      
-var dbPath      = 'mongodb://50.112.250.104/lendrDb';
+var dbPath      = 'mongodb://localhost/lendrDb';
 // Import the data layer, should abstracted away later                          
 var mongoose = require('mongoose');
 
@@ -51,7 +51,7 @@ passport.use(new FacebookStrategy({
 		    // TODO: set this from the callback
 		    curProfile = profile;
 		    curToken = accessToken;
-		    models.Profile.createJob(profile._raw.id, profile._raw);
+		    models.Profile.addUser(profile._raw.id, profile._raw);
 		    getFbData(accessToken, '/me/friends', function(data){
 			    console.log(data);
 			});

@@ -9,7 +9,7 @@ module.exports = function(app, mongoose) {
     };
 
     var ProfileSchema = new mongoose.Schema({
-	    id: {type: String},
+	    id: {type: mongoose.Schema.ObjectId },
 	    profile:{type: String},
 	    added:     { type: Date },     // When the contact was added
 	    updated:   { type: Date }      // When the contact last updated
