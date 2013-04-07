@@ -29,12 +29,14 @@ passport.deserializeUser(function(obj, done) {
 //   profile), and invoke a callback with a user object.
 passport.use(new FacebookStrategy({
 	    clientID: FACEBOOK_APP_ID,
-		clientSecret: FACEBOOK_APP_SECRET,
+	    clientSecret: FACEBOOK_APP_SECRET,
 		callbackURL: "http://ec2-54-245-170-121.us-west-2.compute.amazonaws.com:8000/auth/facebook/callback"
 		},
 	function(accessToken, refreshToken, profile, done) {
 	    // asynchronous verification, for effect...
 	    process.nextTick(function () {
+		    console.log(accessToken);
+		    console.log(profile);
       
 		    // To keep the example simple, the user's Facebook profile is returned to
 		    // represent the logged-in user.  In a typical application, you would want
@@ -119,4 +121,4 @@ app.listen(8000);
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) { return next(); }
     res.redirect('/login')
-	}
+}
