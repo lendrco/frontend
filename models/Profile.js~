@@ -1,0 +1,10 @@
+module.exports = function(app, config, mongoose) {
+    var schemaOptions = {
+	toJSON: {
+	    virtuals: true
+	},
+	toObject: {
+	    virtuals: true
+	}
+    };
+

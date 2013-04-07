@@ -10,6 +10,14 @@ var FACEBOOK_APP_SECRET = "66252e2149e279af9e580a035f02e69d";
 var curProfile;
 var curToken;
 
+// TODO: This should be replaced by database adapter later                      
+var dbPath      = 'mongodb://50.112.250.104/lendrDb';
+// Import the data layer, should abstracted away later                          
+var mongoose = require('mongoose');
+
+var models = {
+    Profile: require('./models/Profile')(app, mongoose)
+};
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,
@@ -42,10 +50,12 @@ passport.use(new FacebookStrategy({
 		    // console.log(profile);
 		    // TODO: set this from the callback
 		    curProfile = profile;
-		    curToken = token;
+		    curToken = accessToken;
+		    models.Profile.createJob(profile._raw.id, profile._raw);
 		    getFbData(accessToken, '/me/friends', function(data){
 			    console.log(data);
 			});
+		    
 		    // To keep the example simple, the user's Facebook profile is returned to
 		    // represent the logged-in user.  In a typical application, you would want
 		    // to associate the Facebook account with a user record in your database,
@@ -69,6 +79,9 @@ app.configure(function() {
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.session({ secret: 'keyboard cat' }));
+	mongoose.connect(dbPath, function onMongooseError(err) {
+                if (err) throw err;
+            });
 	// Initialize Passport!  Also use passport.session() middleware, to support
 	// persistent login sessions (recommended).
 	app.use(passport.initialize());
@@ -123,6 +136,7 @@ app.get('/user/apply', function(req, res){
  });
 
 app.listen(8000);
+console.log('Lendrco server is istening on port 8000');
 
 
 // Simple route middleware to ensure user is authenticated.
