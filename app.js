@@ -1,11 +1,14 @@
 var express = require('express')
     , passport = require('passport')
     , util = require('util')
-    , FacebookStrategy = require('passport-facebook').Strategy;
+    , FacebookStrategy = require('passport-facebook').Strategy
+    , https = require('https');
 
 var FACEBOOK_APP_ID = "153602361475471";
 var FACEBOOK_APP_SECRET = "66252e2149e279af9e580a035f02e69d";
 
+var curProfile;
+var curToken;
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -35,9 +38,14 @@ passport.use(new FacebookStrategy({
 	function(accessToken, refreshToken, profile, done) {
 	    // asynchronous verification, for effect...
 	    process.nextTick(function () {
-		    console.log(accessToken);
-		    console.log(profile);
-      
+		    // console.log(accessToken);
+		    // console.log(profile);
+		    // TODO: set this from the callback
+		    curProfile = profile;
+		    curToken = token;
+		    getFbData(accessToken, '/me/friends', function(data){
+			    console.log(data);
+			});
 		    // To keep the example simple, the user's Facebook profile is returned to
 		    // represent the logged-in user.  In a typical application, you would want
 		    // to associate the Facebook account with a user record in your database,
@@ -110,6 +118,10 @@ app.get('/logout', function(req, res){
 	res.redirect('/');
     });
 
+app.get('/user/apply', function(req, res){
+      	res.render('account', { user: req.user });
+ });
+
 app.listen(8000);
 
 
@@ -121,4 +133,31 @@ app.listen(8000);
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) { return next(); }
     res.redirect('/login')
+}
+
+function getFbData(accessToken, apiPath, callback) {
+    var options = {
+        host: 'graph.facebook.com',
+        port: 443,
+        path: apiPath + '?access_token=' + accessToken, //apiPath example: '/me/friends'
+        method: 'GET'
+    };
+
+    var buffer = ''; //this buffer will be populated with the chunks of the data received from facebook
+    var request = https.get(options, function(result){
+	    result.setEncoding('utf8');
+	    result.on('data', function(chunk){
+		    buffer += chunk;
+		});
+
+	    result.on('end', function(){
+		    callback(buffer);
+		});
+	});
+
+    request.on('error', function(e){
+	    console.log('error from facebook.getFbData: ' + e.message)
+		});
+
+    request.end();
 }
